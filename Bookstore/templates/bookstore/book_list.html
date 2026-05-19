@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>書籍列表</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; max-width: 900px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #f4f4f4; }
+        .toolbar { margin-bottom: 16px; }
+        .button { display: inline-block; padding: 10px 16px; background: #007acc; color: white; text-decoration: none; border-radius: 4px; }
+        .empty { padding: 20px; background: #fff8dc; border: 1px solid #f5e7a8; max-width: 900px; }
+    </style>
+</head>
+<body>
+    <h1>全部書籍</h1>
+    <div class="toolbar">
+        <a class="button" href="{% url 'book-create' %}">新增書籍</a>
+    </div>
+
+    {% if books %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ISBN</th>
+                    <th>書名</th>
+                    <th>分類</th>
+                    <th>數量</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for book in books %}
+                <tr>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.category }}</td>
+                    <td>{{ book.quantity }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty">目前沒有任何書籍。請先新增書籍。</div>
+    {% endif %}
+</body>
+</html>

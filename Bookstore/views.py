@@ -1,6 +1,14 @@
 from django.shortcuts import render
 
 from .forms import BookForm
+from .models import Book
+
+
+def book_list_view(request):
+    books = Book.objects.all().order_by('title')
+    return render(request, 'bookstore/book_list.html', {
+        'books': books,
+    })
 
 
 def book_create_view(request):
