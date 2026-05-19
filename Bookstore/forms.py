@@ -10,5 +10,4 @@ class BookForm(forms.ModelForm):
             'isbn',
             'title',
             'category',
-            'quantity',
         ]

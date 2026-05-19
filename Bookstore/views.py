@@ -4,6 +4,12 @@ from .forms import BookForm
 from .models import Book
 
 
+def home_view(request):
+    return render(request, 'bookstore/home.html', {
+        'user_name': request.user.get_username() or '使用者',
+    })
+
+
 def book_list_view(request):
     books = Book.objects.all().order_by('title')
     return render(request, 'bookstore/book_list.html', {
