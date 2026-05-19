@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>編輯使用者</title>
+    <title>刪除使用者</title>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background: #e4e7ec; color: #1f2937; }
         .layout { display: flex; min-height: 100vh; }
@@ -21,20 +21,18 @@
         .top h2 { margin: 0; font-size: 1.5rem; }
         .top .user-info { font-size: 0.95rem; color: #374151; }
         .card { background: white; border-radius: 18px; padding: 28px; box-shadow: 0 18px 32px rgba(15,23,42,0.08); }
-        .form-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; }
-        .form-box h3 { margin-top: 0; }
-        .field { margin-bottom: 18px; }
-        .field label { display: block; margin-bottom: 8px; font-weight: bold; }
-        .field input, .field select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; }
-        .actions { display: flex; gap: 12px; margin-top: 18px; }
-        .actions button { padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; }
-        .actions .save { background: #16a34a; }
-        .actions .cancel { background: #6b7280; }
-        .actions .delete { background: #dc2626; }
-        .actions .delete:hover { background: #b91c1c; }
-        .actions a { padding: 12px 20px; border-radius: 10px; color: white; text-decoration: none; display: inline-block; background: #dc2626; }
-        .messages { margin-bottom: 16px; color: #0b7a3f; }
-        .note { margin-bottom: 18px; color: #475569; }
+        .delete-box { background: #fef2f2; border: 2px solid #fecaca; border-radius: 16px; padding: 28px; }
+        .delete-box h3 { margin-top: 0; color: #991b1b; }
+        .delete-box .warning { color: #dc2626; font-weight: bold; margin-bottom: 16px; }
+        .user-info-box { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 24px; }
+        .user-info-box p { margin: 8px 0; }
+        .user-info-box strong { color: #1f2937; }
+        .actions { display: flex; gap: 12px; margin-top: 24px; }
+        .actions button { padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-size: 1rem; }
+        .actions .delete-btn { background: #dc2626; }
+        .actions .delete-btn:hover { background: #b91c1c; }
+        .actions .cancel-btn { background: #6b7280; }
+        .actions .cancel-btn:hover { background: #4b5563; }
     </style>
 </head>
 <body>
@@ -54,37 +52,28 @@
     </aside>
     <main class="content">
         <div class="top">
-            <h2>編輯使用者</h2>
+            <h2>刪除使用者</h2>
             <div class="user-info">當前登入：{% if user.is_authenticated %}{{ user.username }}{% else %}尚未登入{% endif %}</div>
         </div>
         <div class="card">
-            <div class="form-box">
-                <h3>編輯使用者：{{ edit_user.username }}</h3>
-                <p class="note">修改使用者資料後，點擊儲存。</p>
+            <div class="delete-box">
+                <h3>確認刪除使用者？</h3>
+                <p class="warning">⚠️ 此操作無法復原</p>
+                
+                <div class="user-info-box">
+                    <p><strong>帳號：</strong> {{ delete_user.username }}</p>
+                    <p><strong>姓名：</strong> {{ delete_user.first_name }}</p>
+                    <p><strong>Email：</strong> {{ delete_user.email }}</p>
+                    <p><strong>權限：</strong> {% if delete_user.is_superuser %}管理員{% elif delete_user.is_staff %}員工{% else %}一般使用者{% endif %}</p>
+                </div>
 
-                {% if messages %}
-                    <div class="messages">
-                        {% for message in messages %}
-                            <p>{{ message }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <p>刪除此使用者帳號將永久移除所有相關資料。請確認此操作。</p>
 
                 <form method="post" novalidate>
                     {% csrf_token %}
-                    {% for field in form %}
-                        <div class="field">
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {% if field.errors %}
-                                <div class="errorlist" style="color:#b91c1c; margin-top:6px;">{{ field.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
                     <div class="actions">
-                        <button type="submit" class="save">儲存變更</button>
-                        <button type="button" class="cancel" onclick="window.location.href='/users/'">返回列表</button>
-                        <a href="{% url 'user-delete' user_id=edit_user.id %}" class="delete">刪除使用者</a>
+                        <button type="submit" class="delete-btn">確認刪除</button>
+                        <button type="button" class="cancel-btn" onclick="window.location.href='{% url 'user-list' %}'">取消</button>
                     </div>
                 </form>
             </div>

@@ -81,6 +81,22 @@ def user_login_view(request):
     return render(request, 'user/login.html', {'form': form})
 
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_delete_view(request, user_id):
+    user_obj = get_object_or_404(User, pk=user_id)
+    
+    if request.method == 'POST':
+        username = user_obj.username
+        user_obj.delete()
+        messages.success(request, f'使用者 {username} 已成功刪除。')
+        return redirect('user-list')
+    
+    return render(request, 'user/user_delete.html', {
+        'delete_user': user_obj,
+    })
+
+
 def user_logout_view(request):
     logout(request)
     return redirect('/')
