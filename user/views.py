@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import CustomUserChangeForm, CustomUserCreationForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm, UserSelfEditForm
 
 
 @login_required
@@ -79,6 +79,22 @@ def user_login_view(request):
         return redirect('/')
 
     return render(request, 'user/login.html', {'form': form})
+
+
+@login_required
+def user_self_edit_view(request):
+    if request.method == 'POST':
+        form = UserSelfEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '個人資料已更新。')
+            return redirect('home')
+    else:
+        form = UserSelfEditForm(instance=request.user)
+
+    return render(request, 'user/user_self_edit.html', {
+        'form': form,
+    })
 
 
 @login_required

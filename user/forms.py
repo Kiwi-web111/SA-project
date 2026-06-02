@@ -69,3 +69,28 @@ class CustomUserChangeForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class UserSelfEditForm(forms.ModelForm):
+    first_name = forms.CharField(label='使用者姓名', max_length=150, required=True)
+    email = forms.EmailField(label='Email', required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'email')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = '帳號'
+        self.fields['username'].disabled = True
+        if self.instance and self.instance.pk:
+            self.fields['first_name'].initial = self.instance.first_name
+            self.fields['email'].initial = self.instance.email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
